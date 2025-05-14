@@ -5,38 +5,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,6 +31,7 @@ import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private lateinit var tecnicoDb: TecnicoDb
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -67,11 +45,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             RegistroTecnicosTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column (
+                    Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding)
-                    ){
+                    ) {
                         TecnicoScreen()
                     }
                 }
@@ -80,32 +58,36 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun TecnicoScreen(
-    ){
-
-        var nombre:String by remember { mutableStateOf("") }
+    fun TecnicoScreen() {
+        var nombre: String by remember { mutableStateOf("") }
         var sueldo: Double by remember { mutableStateOf(0.0) }
-        var errorMessage:String? by remember { mutableStateOf("") }
+        var errorMessage: String? by remember { mutableStateOf("") }
         var editando by remember { mutableStateOf<TecnicoEntity?>(null) }
         val scope = rememberCoroutineScope()
 
         Scaffold { innerPadding ->
-            Column (
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
                     .padding(8.dp)
-            ){
+            ) {
                 ElevatedCard(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Column (
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
-                    ){
+                    ) {
                         Spacer(modifier = Modifier.height(32.dp))
-                        Text("Registro de Técnicos")
+                        Text(
+                            text = "Registro de Técnicos",
+                            style = MaterialTheme.typography.headlineLarge,
+                            modifier = Modifier.fillMaxWidth(),
+                            color = Color(0xFF9C27B0),
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
 
                         OutlinedTextField(
                             value = "0",
@@ -121,9 +103,9 @@ class MainActivity : ComponentActivity() {
                             label = { Text("Nombre del Técnico") },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Color.Blue,
+                                focusedBorderColor = Color(0xFF9C27B0),
                                 unfocusedBorderColor = Color.Gray,
-                                focusedLabelColor = Color.Blue
+                                focusedLabelColor = Color(0xFF9C27B0)
                             )
                         )
 
@@ -132,12 +114,12 @@ class MainActivity : ComponentActivity() {
                             onValueChange = { newValue ->
                                 sueldo = newValue.toDoubleOrNull() ?: 0.0
                             },
-                            label = {Text("Sueldo del Técnico")},
+                            label = { Text("Sueldo del Técnico") },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Color.Blue,
+                                focusedBorderColor = Color(0xFF9C27B0),
                                 unfocusedTextColor = Color.Gray,
-                                focusedLabelColor = Color.Blue
+                                focusedLabelColor = Color(0xFF9C27B0)
                             )
                         )
 
@@ -145,36 +127,31 @@ class MainActivity : ComponentActivity() {
                         errorMessage?.let {
                             Text(text = it, color = Color.Red)
                         }
-                        Row (
+                        Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
-                        ){
+                        ) {
                             OutlinedButton(
-                                onClick = {
-
-                                },
+                                onClick = {},
                                 colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = Color.Blue
+                                    contentColor = Color(0xFF9C27B0)
                                 ),
-                                border = BorderStroke(1.dp, Color.Blue),
+                                border = BorderStroke(1.dp, Color(0xFF9C27B0)),
                                 modifier = Modifier.padding(horizontal = 8.dp)
                             ) {
-                                Icon(imageVector = Icons.Default.Add,
-                                    contentDescription = "new button")
+                                Icon(imageVector = Icons.Default.Add, contentDescription = "new button")
                                 Text("Nuevo")
                             }
 
-                            val scope = rememberCoroutineScope()
-
                             OutlinedButton(
                                 onClick = {
-                                    if(nombre.isBlank()) {
-                                        errorMessage = "El nombre no puede estar vacio."
+                                    if (nombre.isBlank()) {
+                                        errorMessage = "El nombre no puede estar vacío."
                                         return@OutlinedButton
                                     }
 
-                                    if(sueldo <= 0.0) {
+                                    if (sueldo <= 0.0) {
                                         errorMessage = "El sueldo no puede ser cero o menor."
                                         return@OutlinedButton
                                     }
@@ -194,9 +171,9 @@ class MainActivity : ComponentActivity() {
                                     }
                                 },
                                 colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = Color.Blue
+                                    contentColor = Color(0xFF9C27B0)
                                 ),
-                                border = BorderStroke(1.dp, Color.Blue),
+                                border = BorderStroke(1.dp, Color(0xFF9C27B0)),
                                 modifier = Modifier.padding(horizontal = 8.dp)
                             ) {
                                 Icon(
@@ -216,7 +193,7 @@ class MainActivity : ComponentActivity() {
                         lifecycleOwner = lifecycleOwner,
                         minActiveState = Lifecycle.State.STARTED
                     )
-                //TecnicoListScreen(tecnicoList)
+
                 TecnicoListScreen(
                     tecnicoList = tecnicoList,
                     onEdit = { tecnico ->
@@ -243,8 +220,11 @@ class MainActivity : ComponentActivity() {
         Column(modifier = Modifier.fillMaxWidth()) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Lista de técnicos",
-                style = MaterialTheme.typography.headlineSmall
+                text = "Lista de Técnicos",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.fillMaxWidth(),
+                color = Color(0xFF9C27B0),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -263,30 +243,41 @@ class MainActivity : ComponentActivity() {
         onDelete: (TecnicoEntity) -> Unit
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp)
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(modifier = Modifier.weight(1f), text = tecnico.tecnicoId.toString())
+            Text(
+                modifier = Modifier.weight(1f),
+                text = tecnico.tecnicoId.toString(),
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Text(
+                modifier = Modifier.weight(3f),
+                text = tecnico.nombre,
+                style = MaterialTheme.typography.bodyLarge
+            )
             Text(
                 modifier = Modifier.weight(2f),
-                text = tecnico.nombre,
-                style = MaterialTheme.typography.headlineLarge
+                text = "$${"%.2f".format(tecnico.sueldo)}",
+                style = MaterialTheme.typography.bodyLarge
             )
-            Text(modifier = Modifier.weight(2f), text = tecnico.sueldo.toString())
-            IconButton(onClick = { onEdit(tecnico) }) {
-                Icon(Icons.Default.Edit, contentDescription = "Editar")
-            }
 
-            IconButton(onClick = { onDelete(tecnico) }) {
-                Icon(Icons.Default.Delete, contentDescription = "Eliminar")
+            Row {
+                IconButton(onClick = { onEdit(tecnico) }) {
+                    Icon(Icons.Default.Edit, contentDescription = "Editar")
+                }
+
+                IconButton(onClick = { onDelete(tecnico) }) {
+                    Icon(Icons.Default.Delete, contentDescription = "Eliminar")
+                }
             }
         }
-        HorizontalDivider()
     }
 
-    private suspend fun saveTecnico(tecnico: TecnicoEntity){
+    private suspend fun saveTecnico(tecnico: TecnicoEntity) {
         tecnicoDb.TecnicoDao().save(tecnico)
     }
 
