@@ -9,9 +9,9 @@ class PrioridadesRepository(
 ) {
     suspend fun save(prioridad: PrioridadEntity) = dao.save(prioridad)
 
-    suspend fun find(id: Int): PrioridadEntity? = dao.find(id)
+    suspend fun find(id: Int) = dao.find(id)
 
     suspend fun delete(prioridad: PrioridadEntity) = dao.delete(prioridad)
 
-    fun getAll(): Flow<List<PrioridadEntity?>> = dao.getAll()
+    fun getAll(): Flow<List<PrioridadEntity>> = dao.getAll()
 }
