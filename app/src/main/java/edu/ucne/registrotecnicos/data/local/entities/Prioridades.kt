@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class PrioridadEntity(
     @PrimaryKey
     val prioridadId: Int? = null,
-    val descripcion: String = ""
+    val descripcion: String = "",
+    val tiempo: Int = 0
 )
