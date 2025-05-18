@@ -48,6 +48,7 @@ import edu.ucne.registrotecnicos.data.local.entities.TicketEntity
 import edu.ucne.registrotecnicos.presentation.prioridades.PrioridadesViewModel
 import java.util.Date
 import androidx.compose.material3.*
+import androidx.compose.ui.text.style.TextAlign
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,7 +70,6 @@ fun TicketScreen(
 
     val prioridades by viewModel.ListaPrioridades.collectAsState()
     val tecnicos by viewModel.ListaTecnicos.collectAsState()
-
 
     LaunchedEffect(ticketId) {
         if (ticketId != null && ticketId > 0) {
@@ -115,7 +115,15 @@ fun TicketScreen(
                         .padding(8.dp)
                 ) {
                     Spacer(modifier = Modifier.height(32.dp))
-                    Text("Registro de tickets $ticketId")
+
+                    Text(
+                        text = "Registro de Tickets",
+                        style = MaterialTheme.typography.headlineLarge,
+                        modifier = Modifier.fillMaxWidth(),
+                        color = Color(0xFF9C27B0),
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.padding(4.dp))
 
                     OutlinedTextField(
                         value = editando?.ticketId?.toString() ?: "0",
@@ -126,7 +134,6 @@ fun TicketScreen(
                         enabled = false
                     )
 
-                    //prioridad
                     Spacer(modifier = Modifier.height(8.dp))
 
                     var expandedPrioridad by remember { mutableStateOf(false) }
@@ -162,44 +169,49 @@ fun TicketScreen(
                         }
                     }
 
+                    Spacer(modifier = Modifier.padding(4.dp))
 
                     OutlinedTextField(
                         value = cliente,
                         onValueChange = { cliente = it },
                         label = { Text("Nombre del cliente") },
+                        placeholder = { Text("Ej: Juan Pérez") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color.Blue,
+                            focusedBorderColor = Color(0xFF9C27B0),
                             unfocusedBorderColor = Color.Gray,
-                            focusedLabelColor = Color.Blue
+                            focusedLabelColor = Color(0xFF9C27B0)
                         )
                     )
+                    Spacer(modifier = Modifier.padding(4.dp))
 
                     OutlinedTextField(
                         value = asunto,
                         onValueChange = { asunto = it },
                         label = { Text("Asunto") },
+                        placeholder = { Text("Ej: Impresora, Red, Etc") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color.Blue,
+                            focusedBorderColor = Color(0xFF9C27B0),
                             unfocusedBorderColor = Color.Gray,
-                            focusedLabelColor = Color.Blue
+                            focusedLabelColor = Color(0xFF9C27B0)
                         )
                     )
+                    Spacer(modifier = Modifier.padding(4.dp))
 
                     OutlinedTextField(
                         value = descripcion,
                         onValueChange = { descripcion = it },
                         label = { Text("Descripcion") },
+                        placeholder = { Text("Ej: Red Lenta, Tinta, Etc") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color.Blue,
+                            focusedBorderColor = Color(0xFF9C27B0),
                             unfocusedBorderColor = Color.Gray,
-                            focusedLabelColor = Color.Blue
+                            focusedLabelColor = Color(0xFF9C27B0)
                         )
                     )
 
-                    //tecnico
                     Spacer(modifier = Modifier.height(8.dp))
 
                     var expandedTecnico by remember { mutableStateOf(false) }
@@ -235,12 +247,18 @@ fun TicketScreen(
                         }
                     }
 
-
-
                     Spacer(modifier = Modifier.padding(2.dp))
+
                     errorMessage?.let {
-                        Text(text = it, color = Color.Red)
+                        Text(
+                            text = it,
+                            color = Color.Red,
+                            style = MaterialTheme.typography.headlineLarge,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
                     }
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
@@ -251,9 +269,9 @@ fun TicketScreen(
 
                             },
                             colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = Color.Blue
+                                contentColor = Color(0xFF9C27B0)
                             ),
-                            border = BorderStroke(1.dp, Color.Blue),
+                            border = BorderStroke(1.dp, Color(0xFF9C27B0)),
                             modifier = Modifier.padding(horizontal = 8.dp)
                         ) {
                             Icon(
@@ -302,9 +320,9 @@ fun TicketScreen(
                                 navController.navigateUp()
                             },
                             colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = Color.Blue
+                                contentColor = Color(0xFF9C27B0)
                             ),
-                            border = BorderStroke(1.dp, Color.Blue),
+                            border = BorderStroke(1.dp, Color(0xFF9C27B0)),
                             modifier = Modifier.padding(horizontal = 8.dp)
                         ) {
                             Icon(
@@ -319,4 +337,3 @@ fun TicketScreen(
         }
     }
 }
-
