@@ -25,6 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import edu.ucne.registrotecnicos.data.local.entities.TicketEntity
+import java.text.SimpleDateFormat
+import java.util.Date
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,7 +43,7 @@ fun TicketListScreen(
                     style = MaterialTheme.typography.headlineLarge,
                     modifier = Modifier.fillMaxWidth(),
                     color = Color(0xFF9C27B0),
-                    ) })
+                ) })
 
         },
         floatingActionButton = {
@@ -64,12 +67,16 @@ fun TicketListScreen(
     }
 }
 
+
 @Composable
 private fun TicketRow(
     ticket: TicketEntity,
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
+    val dateFormatter = SimpleDateFormat("dd/MM/yyyy")
+    val formattedDate = dateFormatter.format(ticket.fecha)
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -79,18 +86,20 @@ private fun TicketRow(
         Text(modifier = Modifier.weight(1f), text = ticket.ticketId.toString())
         Text(
             modifier = Modifier.weight(2f),
-            text = ticket.fecha.toString(),
+            text = formattedDate,
             style = MaterialTheme.typography.bodySmall
         )
-        Text(modifier = Modifier.weight(2f), style = MaterialTheme.typography.bodySmall,
-         text = ticket.descripcion)
+        Text(
+            modifier = Modifier.weight(2f),
+            text = ticket.descripcion,
+            style = MaterialTheme.typography.bodySmall
+        )
         IconButton(onClick = onEdit) {
             Icon(Icons.Default.Edit, contentDescription = "Editar")
         }
         IconButton(onClick = onDelete) {
             Icon(Icons.Default.Delete, contentDescription = "Eliminar")
         }
-
     }
     HorizontalDivider()
 }
