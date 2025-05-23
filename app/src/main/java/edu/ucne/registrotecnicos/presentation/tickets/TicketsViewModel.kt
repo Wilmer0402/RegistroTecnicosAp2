@@ -114,12 +114,12 @@ class TicketsViewModel(
         }
     }
 
-        private fun saveTicket() {
-            viewModelScope.launch {
-                if(_uiState.value.cliente.isNullOrBlank()&& _uiState.value.asunto.isNullOrBlank() && _uiState.value.descripcion.isNullOrBlank()){
-                  _uiState.update {
-                      it.copy(errorMessage = "Campos Vacios")
-                  }
+    private fun saveTicket() {
+        viewModelScope.launch {
+            if(_uiState.value.cliente.isNullOrBlank()&& _uiState.value.asunto.isNullOrBlank() && _uiState.value.descripcion.isNullOrBlank()){
+                _uiState.update {
+                    it.copy(errorMessage = "Campos Vacios")
+                }
             }else{
                 ticketsRepository.save(_uiState.value.toEntity())
             }
