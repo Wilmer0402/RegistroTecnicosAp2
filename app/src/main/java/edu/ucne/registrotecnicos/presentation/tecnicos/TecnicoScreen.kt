@@ -1,6 +1,5 @@
 package edu.ucne.registrotecnicos.presentation.tecnicos
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -13,69 +12,84 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import edu.ucne.registrotecnicos.data.local.entities.TecnicoEntity
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun TecnicoScreen(
-    tecnicoId: Int? = null,
-    viewModel: TecnicosViewModel,
-    navController: NavController,
-    function: () -> Unit
+    tecnicoId: Int?,
+    viewModel: TecnicosViewModel = hiltViewModel(),
+    goBack: () -> Unit
 ) {
-    var nombre: String by remember { mutableStateOf("") }
-    var sueldo: Double by remember { mutableStateOf(0.0) }
-    var sueldoTexto by remember { mutableStateOf("") }
-    var errorMessage: String? by remember { mutableStateOf(null) }
-    var editando by remember { mutableStateOf<TecnicoEntity?>(null) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(tecnicoId) {
-        if (tecnicoId != null && tecnicoId > 0) {
-            val tecnico = viewModel.findTecnico(tecnicoId)
-            tecnico?.let {
-                editando = it
-                nombre = it.nombre
-                sueldo = it.sueldo
-                sueldoTexto = it.sueldo.toString()
+        tecnicoId?.let {
+            if (it > 0) {
+                viewModel.findTecnico(it)
             }
         }
     }
 
-    Scaffold { innerPadding ->
+    TecnicoBodyScreen(
+        uiState = uiState,
+        onEvent = viewModel::onEvent,
+        goBack = goBack
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TecnicoBodyScreen(
+    uiState: TecnicoUiState,
+    onEvent: (TecnicoEvent) -> Unit,
+    goBack: () -> Unit
+) {
+    val primaryBlue = Color(0xFF2196F3)
+    val accentGreen = Color(0xFF4CAF50)
+    val brightYellow = Color(0xFFFFEB3B)
+    val lightBackground = Color(0xFFF1F8E9)
+
+    Scaffold(
+        containerColor = lightBackground
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(8.dp)
+                .padding(16.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "volver")
+                IconButton(onClick = goBack) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Volver", tint = primaryBlue)
                 }
+                Spacer(modifier = Modifier.width(8.dp))
             }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
             ElevatedCard(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.elevatedCardColors(
+                    containerColor = Color.White
+                ),
+                elevation = CardDefaults.cardElevation(6.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                ) {
-                    Spacer(modifier = Modifier.height(32.dp))
+                Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = "Registro de Técnicos",
-                        style = MaterialTheme.typography.headlineLarge,
-                        modifier = Modifier.fillMaxWidth(),
-                        color = Color(0xFF9C27B0),
-                        textAlign = TextAlign.Center
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = accentGreen,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
                     )
-                    Spacer(modifier = Modifier.padding(4.dp))
+
+                    Spacer(modifier = Modifier.height(24.dp))
 
                     OutlinedTextField(
-                        value = editando?.tecnicoId?.toString() ?: "0",
+                        value = uiState.tecnicoId?.toString() ?: "0",
                         onValueChange = {},
                         label = { Text("ID Técnico") },
                         modifier = Modifier.fillMaxWidth(),
@@ -83,98 +97,75 @@ fun TecnicoScreen(
                         enabled = false
                     )
 
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     OutlinedTextField(
-                        value = nombre,
-                        onValueChange = { nombre = it },
+                        value = uiState.nombre ?: "",
+                        onValueChange = { onEvent(TecnicoEvent.NombreChange(it)) },
                         label = { Text("Nombre del Técnico") },
                         placeholder = { Text("Ej: Juan Pérez") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF9C27B0),
+                            focusedBorderColor = primaryBlue,
                             unfocusedBorderColor = Color.Gray,
-                            focusedLabelColor = Color(0xFF9C27B0)
+                            focusedLabelColor = primaryBlue
                         )
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     OutlinedTextField(
-                        value = sueldoTexto,
-                        onValueChange = { newValue ->
-                            sueldoTexto = newValue
-                            sueldo = newValue.toDoubleOrNull() ?: 0.0
+                        value = uiState.sueldo.toString(),
+                        onValueChange = {
+                            onEvent(TecnicoEvent.SueldoChange(it.toDoubleOrNull() ?: 0.0))
                         },
                         label = { Text("Sueldo del Técnico") },
                         placeholder = { Text("Ej: 550.75") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF9C27B0),
+                            focusedBorderColor = primaryBlue,
                             unfocusedBorderColor = Color.Gray,
-                            focusedLabelColor = Color(0xFF9C27B0)
+                            focusedLabelColor = primaryBlue
                         )
                     )
 
-                    Spacer(modifier = Modifier.padding(6.dp))
-                    errorMessage?.let {
-                        Text(text = it, color = Color.Red)
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    uiState.errorMessage?.let {
+                        Text(
+                            text = it,
+                            color = Color.Red,
+                            style = MaterialTheme.typography.bodySmall
+                        )
                     }
+
+                    Spacer(modifier = Modifier.height(24.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        OutlinedButton(
-                            onClick = {
-                                nombre = ""
-                                sueldo = 0.0
-                                sueldoTexto = ""
-                                errorMessage = null
-                                editando = null
-                            },
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = Color(0xFF9C27B0)
-                            ),
-                            border = BorderStroke(1.dp, Color(0xFF9C27B0)),
-                            modifier = Modifier.padding(horizontal = 8.dp)
+                        Button(
+                            onClick = { onEvent(TecnicoEvent.New) },
+                            colors = ButtonDefaults.buttonColors(containerColor = accentGreen),
+                            modifier = Modifier.weight(1f)
                         ) {
-                            Icon(Icons.Default.Add, contentDescription = "new button")
-                            Text("Nuevo")
+                            Icon(Icons.Default.Add, contentDescription = "Nuevo", tint = brightYellow)
+                            Spacer(modifier = Modifier.width(2.dp))
+                            Text("Nuevo", color = Color.White)
                         }
 
-                        OutlinedButton(
+                        Button(
                             onClick = {
-                                if (nombre.isBlank()) {
-                                    errorMessage = "El nombre no puede estar vacío."
-                                    return@OutlinedButton
-                                }
-                                if (sueldo <= 0.0) {
-                                    errorMessage = "El sueldo no puede ser cero o menor."
-                                    return@OutlinedButton
-                                }
-                                viewModel.saveTecnico(
-                                    TecnicoEntity(
-                                        tecnicoId = editando?.tecnicoId,
-                                        nombre = nombre,
-                                        sueldo = sueldo
-                                    )
-                                )
-                                nombre = ""
-                                sueldo = 0.0
-                                sueldoTexto = ""
-                                errorMessage = null
-                                editando = null
-
-                                navController.navigateUp()
+                                onEvent(TecnicoEvent.Save)
+                                goBack()
                             },
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = Color(0xFF9C27B0)
-                            ),
-                            border = BorderStroke(1.dp, Color(0xFF9C27B0)),
-                            modifier = Modifier.padding(horizontal = 8.dp)
+                            colors = ButtonDefaults.buttonColors(containerColor = primaryBlue),
+                            modifier = Modifier.weight(1f)
                         ) {
-                            Icon(Icons.Default.Edit, contentDescription = "save button")
-                            Text(text = "Guardar")
+                            Icon(Icons.Default.Edit, contentDescription = "Guardar", tint = brightYellow)
+                            Spacer(modifier = Modifier.width(2.dp))
+                            Text("Guardar", color = Color.White)
                         }
                     }
                 }
@@ -182,23 +173,3 @@ fun TecnicoScreen(
         }
     }
 }
-
-
-
-
-/*@Preview(showBackground = true)
-@Composable
-private fun TecnicoPreview() {
-    val navController = rememberNavController()
-    val viewModel = TecnicosViewModel(
-        tecnicosRepository = TODO()
-    )
-    RegistroTecnicosTheme {
-        TecnicoScreen(
-            tecnicoId = null,
-            viewModel = viewModel,
-            navController = navController
-        ) {}
-    }
-}
-*/
