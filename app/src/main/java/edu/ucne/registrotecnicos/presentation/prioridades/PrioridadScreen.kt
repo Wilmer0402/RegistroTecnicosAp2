@@ -1,6 +1,5 @@
 package edu.ucne.registrotecnicos.presentation.prioridades
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -13,64 +12,81 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import edu.ucne.registrotecnicos.data.local.entities.PrioridadEntity
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun PrioridadScreen(
-    prioridadId: Int? = null,
-    viewModel: PrioridadesViewModel,
-    navController: NavController
+    prioridadId: Int?,
+    viewModel: PrioridadesViewModel = hiltViewModel(),
+    goBack: () -> Unit
 ) {
-    var descripcion by remember { mutableStateOf("") }
-    var errorMessage: String? by remember { mutableStateOf(null) }
-    var editando by remember { mutableStateOf<PrioridadEntity?>(null) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(prioridadId) {
-        if (prioridadId != null && prioridadId > 0) {
-            val prioridad = viewModel.findPrioridad(prioridadId)
-            prioridad?.let {
-                editando = it
-                descripcion = it.descripcion
+        prioridadId?.let {
+            if (it > 0) {
+                viewModel.findPrioridad(it)
             }
         }
     }
 
-    Scaffold { innerPadding ->
+    PrioridadBodyScreen(
+        uiState = uiState,
+        onEvent = viewModel::onEvent,
+        goBack = goBack
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PrioridadBodyScreen(
+    uiState: PrioridadUiState,
+    onEvent: (PrioridadEvent) -> Unit,
+    goBack: () -> Unit
+) {
+    // Colores iguales a archivo 1
+    val primaryBlue = Color(0xFF2196F3)
+    val accentGreen = Color(0xFF4CAF50)
+    val brightYellow = Color(0xFFFFEB3B)
+    val lightBackground = Color(0xFFF1F8E9)
+
+    Scaffold(
+        containerColor = lightBackground
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(8.dp)
+                .padding(16.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "volver")
+                verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = goBack) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Volver", tint = primaryBlue)
                 }
             }
 
-            ElevatedCard(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)) {
+            Spacer(modifier = Modifier.height(12.dp))
 
-                    Spacer(modifier = Modifier.height(32.dp))
-
+            ElevatedCard(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.elevatedCardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(6.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = "Registro de Prioridades",
-                        style = MaterialTheme.typography.headlineLarge,
-                        modifier = Modifier.fillMaxWidth(),
-                        color = Color(0xFF9C27B0),
-                        textAlign = TextAlign.Center
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = accentGreen,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
                     )
 
-                    Spacer(modifier = Modifier.padding(4.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
                     OutlinedTextField(
-                        value = editando?.prioridadId?.toString() ?: "0",
+                        value = uiState.prioridadId?.toString() ?: "0",
                         onValueChange = {},
                         label = { Text("ID Prioridad") },
                         modifier = Modifier.fillMaxWidth(),
@@ -78,74 +94,58 @@ fun PrioridadScreen(
                         enabled = false
                     )
 
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     OutlinedTextField(
-                        value = descripcion,
-                        onValueChange = { descripcion = it },
+                        value = uiState.descripcion ?: "",
+                        onValueChange = { onEvent(PrioridadEvent.DescripcionChange(it)) },
                         label = { Text("Descripción") },
                         placeholder = { Text("Ej: Alta, Media, Baja") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF9C27B0),
+                            focusedBorderColor = primaryBlue,
                             unfocusedBorderColor = Color.Gray,
-                            focusedLabelColor = Color(0xFF9C27B0)
+                            focusedLabelColor = primaryBlue
                         )
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    errorMessage?.let {
-                        Text(text = it, color = Color.Red)
+                    uiState.errorMessage?.let {
+                        Text(
+                            text = it,
+                            color = Color.Red,
+                            style = MaterialTheme.typography.bodySmall
+                        )
                     }
+
+                    Spacer(modifier = Modifier.height(24.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        OutlinedButton(
-                            onClick = {
-                                descripcion = ""
-                                errorMessage = null
-                                editando = null
-                            },
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = Color(0xFF9C27B0)
-                            ),
-                            border = BorderStroke(1.dp, Color(0xFF9C27B0)),
-                            modifier = Modifier.padding(horizontal = 8.dp)
+                        Button(
+                            onClick = { onEvent(PrioridadEvent.New) },
+                            colors = ButtonDefaults.buttonColors(containerColor = accentGreen),
+                            modifier = Modifier.weight(1f)
                         ) {
-                            Icon(Icons.Default.Add, contentDescription = "nuevo")
-                            Text("Nuevo")
+                            Icon(Icons.Default.Add, contentDescription = "Nuevo", tint = brightYellow)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Nuevo", color = Color.White)
                         }
 
-                        OutlinedButton(
+                        Button(
                             onClick = {
-                                if (descripcion.isBlank()) {
-                                    errorMessage = "La descripción no puede estar vacía."
-                                    return@OutlinedButton
-                                }
-
-                                viewModel.savePrioridad(
-                                    PrioridadEntity(
-                                        prioridadId = editando?.prioridadId,
-                                        descripcion = descripcion
-                                    )
-                                )
-
-                                descripcion = ""
-                                errorMessage = null
-                                editando = null
-
-                                navController.navigateUp()
+                                onEvent(PrioridadEvent.Save)
+                                goBack()
                             },
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = Color(0xFF9C27B0)
-                            ),
-                            border = BorderStroke(1.dp, Color(0xFF9C27B0)),
-                            modifier = Modifier.padding(horizontal = 8.dp)
+                            colors = ButtonDefaults.buttonColors(containerColor = primaryBlue),
+                            modifier = Modifier.weight(1f)
                         ) {
-                            Icon(Icons.Default.Edit, contentDescription = "guardar")
-                            Text(text = "Guardar")
+                            Icon(Icons.Default.Edit, contentDescription = "Guardar", tint = brightYellow)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Guardar", color = Color.White)
                         }
                     }
                 }
