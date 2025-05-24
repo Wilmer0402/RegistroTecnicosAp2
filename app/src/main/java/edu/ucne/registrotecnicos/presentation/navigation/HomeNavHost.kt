@@ -23,63 +23,88 @@ import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoScreen
 
 @Composable
 fun HomeNavHost(
-    navController: NavHostController,
-    tecnicoList: List<TecnicoEntity>,
-    ticketList: List<TicketEntity>,
-    prioridadList: List<PrioridadEntity>,
+    navHostController: NavHostController,
+    prioridadesViewModel: PrioridadesViewModel,
     tecnicosViewModel: TecnicosViewModel,
-    ticketsViewModel: TicketsViewModel,
-    prioridadesViewModel: PrioridadesViewModel
-) {
+    ticketsViewModel: TicketsViewModel
+){
     NavHost(
-        navController = navController,
-        startDestination = Screen.Home // <- Esto asume que tienes una pantalla principal o menú
+        navController = navHostController,
+        startDestination = Screen.Home
     ) {
-        composable<Screen.Home> {
-            HomeScreen( // Esta pantalla deberías crearla
-                onNavigateToTecnicos = { navController.navigate(Screen.TecnicoList) },
-                onNavigateToTickets = { navController.navigate(Screen.TicketList) },
-                onNavigateToPrioridades = { navController.navigate(Screen.PrioridadList) }
-            )
+        //inicio
+        composable <Screen.Home> {
+            HomeScreen(navController = navHostController)
         }
 
-        // Rutas de Técnicos
-        composable<Screen.TecnicoList> {
-            TecnicoListScreen(
-                tecnicoList = tecnicoList,
-                onEdit = { id -> navController.navigate(Screen.Tecnico(id)) },
-                onDelete = { tecnico -> tecnicosViewModel.deleteTecnico(tecnico) }
-            )
-        }
-        composable<Screen.Tecnico> { backStack ->
-            val id = backStack.toRoute<Screen.Tecnico>().tecnicoId
-            TecnicoScreen(id, tecnicosViewModel, navController) { }
-        }
+        //pantalla lista de prioridades
+        composable <Screen.PrioridadList> {
 
-        // Rutas de Tickets
-        composable<Screen.TicketList> {
-            TicketListScreen(
-                ticketList = ticketList,
-                onEdit = { id -> navController.navigate(Screen.Ticket(id)) },
-                onDelete = { ticket -> ticketsViewModel.deleteTicket(ticket) }
-            )
-        }
-        composable<Screen.Ticket> { backStack ->
-            val id = backStack.toRoute<Screen.Ticket>().ticketId
-            TicketScreen(id, ticketsViewModel, navController) { }
-        }
-
-        // Rutas de Prioridades
-        composable<Screen.PrioridadList> {
             PrioridadListScreen(
-                prioridadList = prioridadList,
-                onEdit = { id -> navController.navigate(Screen.Prioridad(id)) },
-                onDelete = { prioridad -> prioridadesViewModel.deletePrioridad(prioridad) }
+                goToPrioridad = { id ->
+                    navHostController.navigate(Screen.Prioridad(id ?: 0))
+                },
+                createPrioridad = {
+                    navHostController.navigate(Screen.Prioridad(0))
+                }
+            )
+
+        }
+
+        //pantalla formulario de prioridades
+        composable <Screen.Prioridad> { backStack ->
+            val prioridadId = backStack.toRoute<Screen.Prioridad>().prioridadId
+            PrioridadScreen(
+                prioridadId = prioridadId,
+                //viewModel = prioridadesViewModel,
+                goBack = { navHostController.popBackStack() }
             )
         }
-        composable<Screen.Prioridad> { backStack ->
-            val id = backStack.toRoute<Screen.Prioridad>().prioridadId
-            PrioridadScreen(id, prioridadesViewModel, navController)
+
+        //pantalla lista de tecnicos
+        composable<Screen.TecnicoList>{
+
+            TecnicoListScreen(
+                goToTecnico = { id ->
+                    navHostController.navigate(Screen.Tecnico(id ?: 0))
+                },
+                createTecnico = {
+                    navHostController.navigate((Screen.Tecnico(0)))
+                }
+            )
+        }
+
+        //pantalla formulario de tecnico
+        composable <Screen.Tecnico>{ backStack ->
+            val tecnicoId = backStack.toRoute<Screen.Tecnico>().tecnicoId
+            TecnicoScreen(
+                tecnicoId = tecnicoId,
+                //viewModel = tecnicosViewModel,
+                goBack = { navHostController.popBackStack() }
+            )
+        }
+
+        //pantalla lista de tickets
+        composable <Screen.TicketList>{
+
+            TicketListScreen(
+                goToTicket = { id ->
+                    navHostController.navigate(Screen.Ticket(id ?: 0))
+                },
+                createTicket = {
+                    navHostController.navigate((Screen.Ticket(0)))
+                }
+            )
+        }
+
+        //pantalla formulario tickets
+        composable <Screen.Ticket>{ backStack ->
+            val ticketId = backStack.toRoute<Screen.Ticket>().ticketId
+            TicketScreen(
+                ticketId = ticketId,
+                //viewModel = ticketsViewModel,
+                goBack = { navHostController.popBackStack()}
+            )
         }
     }
 }
