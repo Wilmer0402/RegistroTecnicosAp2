@@ -21,12 +21,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import edu.ucne.registrotecnicos.presentation.navigation.Screen
 
 @Composable
 fun HomeScreen(
-    onNavigateToTecnicos: () -> Unit,
-    onNavigateToTickets: () -> Unit,
-    onNavigateToPrioridades: () -> Unit
+    navController: NavController
 ) {
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -49,7 +49,7 @@ fun HomeScreen(
             MenuButton(
                 title = "Ir a Técnicos",
                 icon = Icons.Default.Build,
-                onClick = onNavigateToTecnicos,
+                onClick = {navController.navigate(Screen.TecnicoList)},
                 backgroundColor = Color(0xFF81C784) // Verde suave
             )
 
@@ -58,7 +58,7 @@ fun HomeScreen(
             MenuButton(
                 title = "Ir a Tickets",
                 icon = Icons.Default.Assignment,
-                onClick = onNavigateToTickets,
+                onClick ={navController.navigate(Screen.TicketList)},
                 backgroundColor = Color(0xFF64B5F6) // Azul
             )
 
@@ -67,7 +67,7 @@ fun HomeScreen(
             MenuButton(
                 title = "Ir a Prioridades",
                 icon = Icons.Default.PriorityHigh,
-                onClick = onNavigateToPrioridades,
+                onClick = {navController.navigate(Screen.PrioridadList)},
                 backgroundColor = Color(0xFFFFB74D) // Naranja
             )
         }
