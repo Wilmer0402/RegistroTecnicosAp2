@@ -30,7 +30,7 @@ class TecnicosViewModel @Inject constructor(
             is TecnicoEvent.NombreChange -> onNombreChange(event.nombre)
             TecnicoEvent.Save -> saveTecnico()
             is TecnicoEvent.SueldoChange -> onSueldoChange(event.sueldo)
-            is TecnicoEvent.TecnicoChange -> onTecnicoChange((event.tecnicoId))
+            is TecnicoEvent.TecnicoChange -> onTecnicoIdChange((event.tecnicoId))
         }
     }
 
@@ -104,7 +104,7 @@ class TecnicosViewModel @Inject constructor(
         }
     }
 
-        private fun onTecnicoChange(tecnicoId: Int){
+        private fun onTecnicoIdChange(tecnicoId: Int){
             _uiState.update {
                 it.copy(tecnicoId = tecnicoId)
             }
