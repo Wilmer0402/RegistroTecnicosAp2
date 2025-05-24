@@ -2,6 +2,7 @@ package edu.ucne.registrotecnicos.presentation.prioridades
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.ucne.registrotecnicos.data.local.entities.PrioridadEntity
 import edu.ucne.registrotecnicos.data.repository.PrioridadesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,17 +10,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class PrioridadesViewModel(
+@HiltViewModel
+
+ data class PrioridadesViewModel @Inject constructor(
     private val prioridadRepository: PrioridadesRepository
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(PrioridadUiState())
     val uiState: StateFlow<PrioridadUiState> = _uiState.asStateFlow()
 
-    init {
-        getPrioridades()
-    }
 
     fun onEvent(event: PrioridadEvent) {
         when (event) {
@@ -30,6 +30,11 @@ class PrioridadesViewModel(
             PrioridadEvent.Delete -> deletePrioridad()
         }
     }
+
+    init {
+        getPrioridades()
+    }
+
 
     private fun getPrioridades() {
         viewModelScope.launch {
