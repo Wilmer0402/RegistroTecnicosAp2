@@ -82,7 +82,7 @@ fun TicketBodyScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     OutlinedTextField(
                         value = uiState.ticketId?.toString() ?: "0",
@@ -93,7 +93,7 @@ fun TicketBodyScreen(
                         enabled = false
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     // Prioridad Dropdown
                     ExposedDropdownMenuBox(
@@ -129,7 +129,7 @@ fun TicketBodyScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     OutlinedTextField(
                         value = uiState.cliente ?: "",
@@ -144,7 +144,7 @@ fun TicketBodyScreen(
                         )
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     OutlinedTextField(
                         value = uiState.asunto ?: "",
@@ -159,7 +159,7 @@ fun TicketBodyScreen(
                         )
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     OutlinedTextField(
                         value = uiState.descripcion ?: "",
@@ -174,7 +174,7 @@ fun TicketBodyScreen(
                         )
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     // Técnico Dropdown
                     ExposedDropdownMenuBox(
@@ -220,7 +220,7 @@ fun TicketBodyScreen(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
