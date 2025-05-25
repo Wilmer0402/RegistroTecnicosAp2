@@ -17,16 +17,14 @@ import edu.ucne.registrotecnicos.data.local.entities.PrioridadEntity
 import edu.ucne.registrotecnicos.data.local.entities.TecnicoEntity
 import edu.ucne.registrotecnicos.data.local.entities.TicketEntity
 import edu.ucne.registrotecnicos.presentation.Home.HomeScreen
+import edu.ucne.registrotecnicos.presentation.mensaje.MensajeScreen
 import edu.ucne.registrotecnicos.presentation.prioridades.PrioridadScreen
 import edu.ucne.registrotecnicos.presentation.tickets.TicketScreen
 import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoScreen
 
 @Composable
 fun HomeNavHost(
-    navHostController: NavHostController,
-    prioridadesViewModel: PrioridadesViewModel,
-    tecnicosViewModel: TecnicosViewModel,
-    ticketsViewModel: TicketsViewModel
+    navHostController: NavHostController
 ){
     NavHost(
         navController = navHostController,
@@ -91,6 +89,11 @@ fun HomeNavHost(
                 goToTicket = { id ->
                     navHostController.navigate(Screen.Ticket(id ?: 0))
                 },
+                goToMensaje = { ticketId -> // Nueva función
+                    // Asegurarnos de que ticketId no sea null aquí
+                    require(ticketId != null) { "Ticket ID no puede ser null" }
+                    navHostController.navigate(Screen.Mensaje(ticketId))
+                },
                 createTicket = {
                     navHostController.navigate((Screen.Ticket(0)))
                 }
@@ -106,5 +109,15 @@ fun HomeNavHost(
                 goBack = { navHostController.popBackStack()}
             )
         }
+        // Nueva pantalla de Mensajes
+        composable<Screen.Mensaje> { backStack ->
+            val ticketId = backStack.toRoute<Screen.Mensaje>().ticketId
+            require(ticketId != null) { "Ticket ID no puede ser null para MensajeScreen" }
+            MensajeScreen(
+                ticketId = ticketId,
+                goBack = { navHostController.popBackStack() }
+            )
+        }
+
     }
 }
