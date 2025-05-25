@@ -15,34 +15,64 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MensajesViewModel @Inject constructor(
-    private val mensajeRepository: MensajesRepository
-) : ViewModel() {
+    private val mensajesRepository: MensajesRepository
+): ViewModel() {
+
     private val _uiState = MutableStateFlow(MensajeUiState(
         ticketId = 0
     ))
     val uiState = _uiState.asStateFlow()
 
-//    init {
-//        getMensajes()
-//    }
-
-    fun onEvent(event: MensajeEvent) {
-        when (event) {
+    fun onEvent(event: MensajeEvent){
+        when(event) {
             is MensajeEvent.ContenidoChange -> onContenidoChange(event.contenido)
             MensajeEvent.Delete -> deleteMensaje()
             is MensajeEvent.FechaChange -> onFechaChange(event.fecha)
             is MensajeEvent.MensajeChange -> onMensajeIdChange(event.mensajeId)
             MensajeEvent.New -> nuevo()
             is MensajeEvent.RemitenteChange -> onRemitenteChange(event.remitente)
-            MensajeEvent.Save -> saveMensaje()
-            is MensajeEvent.TicketIdChange -> {
-                onTicketIdChange(event.ticketId)
-                getMensajes(event.ticketId)
+            MensajeEvent.Save -> enviarMensaje()
+            is MensajeEvent.TicketIdChange -> onTicketIdChange(event.ticketId)
+            is MensajeEvent.TipoRemitenteChange -> onTipoRemitenteChange(event.tipoRemitente)
+        }
+    }
+
+    //getAll
+    fun cargarMensajes(ticketId: Int) {
+        viewModelScope.launch {
+            mensajesRepository.getAll(ticketId).collect { lista ->
+                _uiState.update {
+                    it.copy(mensajes = lista)
+                }
+            }
+        }
+    }
+    // save
+    private fun enviarMensaje() {
+        viewModelScope.launch {
+            if (_uiState.value.contenido.isNullOrBlank()){
+                _uiState.update {
+                    it.copy(errorMessage = "Campo vacio!!!")
+                }
+            }
+            else{
+                mensajesRepository.save(_uiState.value.toEntity())
+                cargarMensajes(_uiState.value.ticketId ?: 0) // <-- Refresca los mensajes
+                // Limpia el campo de texto
+                _uiState.update {
+                    it.copy(contenido = "")
+                }
             }
         }
     }
 
-    private fun nuevo() {
+    private fun deleteMensaje() {
+        viewModelScope.launch {
+            mensajesRepository.delete(_uiState.value.toEntity())
+        }
+    }
+
+    private fun nuevo(){
         _uiState.update {
             it.copy(
                 mensajeId = null,
@@ -50,54 +80,7 @@ class MensajesViewModel @Inject constructor(
                 contenido = "",
                 remitente = "",
                 ticketId = 0,
-                errorMessage = null
             )
-        }
-    }
-
-    fun getMensajes(ticketId: Int) {
-        viewModelScope.launch {
-            mensajeRepository.getAll(ticketId).collect() { mensajes ->
-                _uiState.update {
-                    it.copy(mensajes = mensajes)
-                }
-            }
-        }
-    }
-
-    fun findPrioridad(mensajeId: Int) {
-        viewModelScope.launch {
-            if (mensajeId > 0) {
-                val mensaje = mensajeRepository.find(mensajeId)
-                _uiState.update {
-                    it.copy(
-                        mensajeId = mensaje?.mensajeId,
-                        fecha = mensaje?.fecha ?: Date(),
-                        contenido = mensaje?.contenido ?: "",
-                        remitente = mensaje?.remitente ?: "",
-                        ticketId = mensaje?.ticketId ?: 0,
-                    )
-                }
-            }
-        }
-    }
-
-    private fun saveMensaje() {
-        viewModelScope.launch {
-            if (_uiState.value.contenido.isNullOrBlank()) {
-                _uiState.update {
-                    it.copy(errorMessage = "Campos vacios")
-                }
-            } else {
-                mensajeRepository.save(_uiState.value.toEntity())
-            }
-        }
-    }
-
-
-    private fun deleteMensaje() {
-        viewModelScope.launch {
-            mensajeRepository.delete(_uiState.value.toEntity())
         }
     }
 
@@ -107,21 +90,27 @@ class MensajesViewModel @Inject constructor(
         }
     }
 
-    private fun onMensajeIdChange(mensajeId: Int) {
+    private fun onMensajeIdChange(id: Int) {
         _uiState.update {
-            it.copy(mensajeId = mensajeId)
+            it.copy(mensajeId = id)
         }
     }
 
-    private fun onContenidoChange(contenido: String) {
+    private fun onContenidoChange(contenido: String){
         _uiState.update {
             it.copy(contenido = contenido)
         }
     }
 
-    private fun onRemitenteChange(remitente: String) {
+    private fun onRemitenteChange(remitente: String){
         _uiState.update {
             it.copy(remitente = remitente)
+        }
+    }
+
+    private fun onTipoRemitenteChange(tipoRemitente: String){
+        _uiState.update {
+            it.copy(tipoRemitente = tipoRemitente)
         }
     }
 
@@ -129,6 +118,7 @@ class MensajesViewModel @Inject constructor(
         _uiState.update {
             it.copy(ticketId = ticketId)
         }
+        cargarMensajes(ticketId)
     }
 }
 
@@ -137,6 +127,6 @@ fun MensajeUiState.toEntity() = MensajeEntity(
     fecha = fecha ?: Date(),
     contenido = contenido ?: "",
     remitente = remitente ?: "",
-    ticketId = ticketId,
-
-    )
+    tipoRemitente = tipoRemitente ?: "",
+    ticketId = ticketId ?: 0
+)
