@@ -50,8 +50,8 @@ fun MensajeBodyScreen(
     var selectedRemitente by remember { mutableStateOf(uiState.remitente ?: "") }
     val listState = rememberLazyListState()
 
-    // Ordenamos mensajes por fecha ascendente (más antiguos arriba)
-    val mensajesOrdenados = uiState.mensajes.sortedBy { it.fecha }
+
+    val mensajesOrdenados = uiState.mensajes.sortedByDescending { it.fecha }
 
     Scaffold(
         topBar = {
