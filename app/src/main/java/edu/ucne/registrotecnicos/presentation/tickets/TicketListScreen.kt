@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,12 +27,15 @@ import java.util.*
 fun TicketListScreen(
     viewModel: TicketsViewModel = hiltViewModel(),
     goToTicket: (Int) -> Unit,
-    createTicket: () -> Unit
+    goToMensaje: (Int) -> Unit,
+    createTicket: () -> Unit,
+    deleteTicket: ((TicketEntity)->Unit)? = null
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     TicketListBodyScreen(
         uiState = uiState,
         goToTicket = goToTicket,
+        goToMensaje = goToMensaje,
         createTicket = createTicket,
         deleteTicket = { ticket ->
             viewModel.onEvent(TicketEvent.TicketChange(ticket.ticketId ?: 0))
@@ -44,6 +48,7 @@ fun TicketListScreen(
 private fun TicketRow(
     ticket: TicketEntity,
     goToTicket: (Int) -> Unit,
+    goToMensaje: (Int) -> Unit,
     deleteTicket: (TicketEntity) -> Unit
 ) {
     Card(
@@ -67,13 +72,10 @@ private fun TicketRow(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            Column(
-                modifier = Modifier.weight(2f),
-                verticalArrangement = Arrangement.Center
-            ) {
+            Column(modifier = Modifier.weight(2f)) {
                 Text(
                     text = ticket.fecha.toFormattedString(),
-                    style = MaterialTheme.typography.bodySmall,  // texto más pequeño
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -82,14 +84,30 @@ private fun TicketRow(
             Column(modifier = Modifier.weight(4f)) {
                 Text(
                     text = ticket.descripcion,
-                    style = MaterialTheme.typography.bodySmall,  // texto más pequeño
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 3,  // permitir hasta 3 líneas para más texto visible
+                    maxLines = 3,
                     overflow = TextOverflow.Ellipsis
                 )
             }
             Spacer(modifier = Modifier.width(12.dp))
             Row {
+                IconButton(
+                    onClick = { goToMensaje(ticket.ticketId ?: 0) },
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(MaterialTheme.shapes.small)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.MailOutline,
+                        contentDescription = "Chat",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
                 IconButton(
                     onClick = { goToTicket(ticket.ticketId ?: 0) },
                     modifier = Modifier
@@ -103,7 +121,9 @@ private fun TicketRow(
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
-                Spacer(modifier = Modifier.width(12.dp))
+
+                Spacer(modifier = Modifier.width(8.dp))
+
                 IconButton(
                     onClick = { deleteTicket(ticket) },
                     modifier = Modifier
@@ -132,6 +152,7 @@ fun Date.toFormattedString(): String {
 fun TicketListBodyScreen(
     uiState: TicketUiState,
     goToTicket: (Int) -> Unit,
+    goToMensaje: (Int) -> Unit,
     createTicket: () -> Unit,
     deleteTicket: (TicketEntity) -> Unit
 ) {
@@ -170,10 +191,10 @@ fun TicketListBodyScreen(
                 TicketRow(
                     ticket = ticket,
                     goToTicket = goToTicket,
+                    goToMensaje = goToMensaje,
                     deleteTicket = deleteTicket
                 )
             }
         }
     }
 }
-
