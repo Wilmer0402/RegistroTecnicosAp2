@@ -10,11 +10,13 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material3.*
+import androidx.compose.material3.CardDefaults.cardElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,7 +31,7 @@ fun TicketListScreen(
     goToTicket: (Int) -> Unit,
     goToMensaje: (Int) -> Unit,
     createTicket: () -> Unit,
-    deleteTicket: ((TicketEntity)->Unit)? = null
+    deleteTicket: ((TicketEntity) -> Unit)? = null
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     TicketListBodyScreen(
@@ -54,44 +56,62 @@ private fun TicketRow(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+            .padding(8.dp),
+        elevation = cardElevation(6.dp),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
-        Row(
+        Column(
             modifier = Modifier
-                .padding(horizontal = 20.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(16.dp)
+                .fillMaxWidth()
         ) {
-            Column(modifier = Modifier.weight(1f)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Top
+            ) {
                 Text(
-                    text = "ID: ${ticket.ticketId}",
+                    text = "Ticket #: ${ticket.ticketId}",
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f)
                 )
-            }
-            Column(modifier = Modifier.weight(2f)) {
                 Text(
-                    text = ticket.fecha.toFormattedString(),
+                    text = "Fecha: ${ticket.fecha.toFormattedString()}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            Column(modifier = Modifier.weight(4f)) {
-                Text(
-                    text = ticket.descripcion,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-            Spacer(modifier = Modifier.width(12.dp))
-            Row {
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "Cliente: " + ticket.cliente,
+                fontWeight = FontWeight.ExtraBold,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+
+            Spacer(modifier = Modifier.height(2.dp))
+
+            Text(
+                text = "Asunto: " + ticket.asunto,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top=8.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
                 IconButton(
                     onClick = { goToMensaje(ticket.ticketId ?: 0) },
                     modifier = Modifier
@@ -143,7 +163,7 @@ private fun TicketRow(
 }
 
 fun Date.toFormattedString(): String {
-    val format = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+    val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     return format.format(this)
 }
 
