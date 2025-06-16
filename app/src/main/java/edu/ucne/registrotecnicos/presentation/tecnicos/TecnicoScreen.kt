@@ -111,7 +111,6 @@ fun TecnicoBodyScreen(
                             focusedLabelColor = primaryBlue
                         )
                     )
-
                     Spacer(modifier = Modifier.height(16.dp))
 
                     OutlinedTextField(

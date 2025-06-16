@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
 }
 
+
 android {
     namespace = "edu.ucne.registrotecnicos"
     compileSdk = 35

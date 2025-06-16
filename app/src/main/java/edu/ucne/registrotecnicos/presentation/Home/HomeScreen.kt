@@ -70,6 +70,15 @@ fun HomeScreen(
                 onClick = {navController.navigate(Screen.PrioridadList)},
                 backgroundColor = Color(0xFFFFB74D) // Naranja
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            MenuButton(
+                title = "Ir a Técnicos API",
+                icon = Icons.Default.Build,
+                onClick = {navController.navigate(Screen.TecnicList)},
+                backgroundColor = Color(0xFF81C784) // Verde suave
+            )
         }
     }
 }

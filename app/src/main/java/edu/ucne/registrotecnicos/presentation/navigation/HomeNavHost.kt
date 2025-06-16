@@ -19,6 +19,8 @@ import edu.ucne.registrotecnicos.data.local.entities.TicketEntity
 import edu.ucne.registrotecnicos.presentation.Home.HomeScreen
 import edu.ucne.registrotecnicos.presentation.mensaje.MensajeScreen
 import edu.ucne.registrotecnicos.presentation.prioridades.PrioridadScreen
+import edu.ucne.registrotecnicos.presentation.tecnico.TecnicListScreen
+import edu.ucne.registrotecnicos.presentation.tecnico.TecnicScreen
 import edu.ucne.registrotecnicos.presentation.tickets.TicketScreen
 import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoScreen
 
@@ -118,6 +120,28 @@ fun HomeNavHost(
                 goBack = { navHostController.popBackStack() }
             )
         }
+
+        // Pantallas de Listar Tecnicos
+        composable<Screen.TecnicList> {
+            TecnicListScreen(
+                goToTecnico= { id ->
+                    navHostController.navigate(Screen.Tecnicos(id))
+                },
+               createTecnico = {
+                    navHostController.navigate(Screen.Tecnicos(null))
+                },
+                goBack = { navHostController.popBackStack() }
+            )
+        }
+
+        //pantalla formulario de Tecnicos
+        composable <Screen.Tecnicos>{ backStack ->
+            TecnicScreen(
+                 goBack = { navHostController.popBackStack() }
+             )
+        }
+
+
 
     }
 }
