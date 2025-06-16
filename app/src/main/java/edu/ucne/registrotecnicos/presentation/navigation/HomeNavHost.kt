@@ -134,7 +134,7 @@ fun HomeNavHost(
             )
         }
 
-        //pantalla formulario de TecnicosAPI
+        //pantalla formulario de Tecnicos API
         composable <Screen.Tecnicos>{ backStack ->
             TecnicScreen(
                  goBack = { navHostController.popBackStack() }
