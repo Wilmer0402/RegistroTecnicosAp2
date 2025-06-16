@@ -21,7 +21,7 @@ import edu.ucne.registrotecnicos.data.remote.dto.TecnicDto
 
 @Composable
 fun TecnicListScreen(
-    viewModel: TecnicoViewModel = hiltViewModel(),
+    viewModel: TecnicViewModel = hiltViewModel(),
     createTecnico: () -> Unit,
     goToTecnico: (Int) -> Unit,
     goBack: () -> Unit

@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun TecnicScreen(
     tecnicoId: Int? = null,
-    viewModel: TecnicoViewModel = hiltViewModel(),
+    viewModel: TecnicViewModel = hiltViewModel(),
     goBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -50,7 +50,7 @@ fun TecnicBodyScreen(
     uiState: TecnicUiState,
     onEvent: (TecnicEvent) -> Unit,
     goBack: () -> Unit,
-    viewModel: TecnicoViewModel
+    viewModel: TecnicViewModel
 ) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }

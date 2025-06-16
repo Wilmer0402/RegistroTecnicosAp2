@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TecnicoViewModel @Inject constructor(
+class TecnicViewModel @Inject constructor(
     private val tecnicRepository: TecnicRepository
 ) : ViewModel() {
 

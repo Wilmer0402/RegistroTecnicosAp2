@@ -1,7 +1,7 @@
 package edu.ucne.registrotecnicos.presentation.tecnico
 
 sealed interface TecnicEvent {
-    data class  TecnicIdChange(val tecnicoId: Int): TecnicEvent
+    data class TecnicIdChange(val tecnicoId: Int): TecnicEvent
     data class NombreChange(val nombre: String): TecnicEvent
     data class SueldoChange(val sueldo: Double): TecnicEvent
 

@@ -121,7 +121,7 @@ fun HomeNavHost(
             )
         }
 
-        // Pantallas de Listar Tecnicos
+        // Pantallas de Listar TecnicosAPI
         composable<Screen.TecnicList> {
             TecnicListScreen(
                 goToTecnico= { id ->
@@ -134,7 +134,7 @@ fun HomeNavHost(
             )
         }
 
-        //pantalla formulario de Tecnicos
+        //pantalla formulario de TecnicosAPI
         composable <Screen.Tecnicos>{ backStack ->
             TecnicScreen(
                  goBack = { navHostController.popBackStack() }
