@@ -1,4 +1,5 @@
 package edu.ucne.registrotecnicos.data.repository
+import edu.ucne.registrotecnicos.data.local.dao.TecnicoDao
 import edu.ucne.registrotecnicos.data.remote.RemoteDataSource
 import edu.ucne.registrotecnicos.data.remote.Resource
 import edu.ucne.registrotecnicos.data.remote.dto.TecnicDto
@@ -8,7 +9,7 @@ import retrofit2.HttpException
 import  javax.inject.Inject
 
 class TecnicRepository @Inject constructor(
-    private val remoteDataSource: RemoteDataSource
+    private val remoteDataSource: RemoteDataSource,
 ){
     fun getTecnic(tecnicoId: Int) : Flow<Resource<List<TecnicDto>>> = flow{
         try{
