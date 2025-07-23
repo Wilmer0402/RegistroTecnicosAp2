@@ -68,7 +68,7 @@ class TecnicViewModel @Inject constructor(
             it.copy(
                 tecnicoId = 0,
                 nombre = "",
-                sueldo= 0.0,
+                sueldo = 0.0,
                 errorNombre = "",
                 errorSueldo = "",
                 errorMessage = ""
@@ -106,7 +106,7 @@ class TecnicViewModel @Inject constructor(
             } catch (e: retrofit2.HttpException) {
                 _uiState.update {
                     it.copy(
-                        errorMessage = "Error en la API: ${e.code()} - ${e.message}",
+                        errorMessage = "Error en la API: ${e.code()} - ${e.message()}",
                         isSuccess = false
                     )
                 }
@@ -125,12 +125,24 @@ class TecnicViewModel @Inject constructor(
         viewModelScope.launch {
             tecnicRepository.getTecnic().collectLatest { result ->
                 when (result) {
-                    is Resource.Loading -> _uiState.update { it.copy(isLoading = true) }
-                    is Resource.Success -> _uiState.update {
-                        it.copy(tecnicos = result.data ?: emptyList(), isLoading = false)
+                    is Resource.Loading -> {
+                        _uiState.update { it.copy(isLoading = true) }
                     }
-                    is Resource.Error -> _uiState.update {
-                        it.copy(errorMessage = result.message ?: "Error desconocido", isLoading = false)
+                    is Resource.Success -> {
+                        _uiState.update {
+                            it.copy(
+                                tecnicos = result.data ?: emptyList(),
+                                isLoading = false
+                            )
+                        }
+                    }
+                    is Resource.Error -> {
+                        _uiState.update {
+                            it.copy(
+                                errorMessage = result.message ?: "Error desconocido",
+                                isLoading = false
+                            )
+                        }
                     }
                 }
             }
@@ -148,7 +160,7 @@ class TecnicViewModel @Inject constructor(
                                 it.copy(
                                     tecnicoId = tecnico?.tecnicoId ?: 0,
                                     nombre = tecnico?.nombre ?: "",
-                                    sueldo= tecnico?.sueldo ?: 0.0
+                                    sueldo = tecnico?.sueldo ?: 0.0
                                 )
                             }
                         }

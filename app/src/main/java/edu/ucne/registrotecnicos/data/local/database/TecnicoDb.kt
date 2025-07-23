@@ -33,7 +33,7 @@ class Converters {
         TicketEntity::class,
         MensajeEntity::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -42,4 +42,5 @@ abstract class TecnicoDb : RoomDatabase() {
     abstract fun PrioridadDao(): PrioridadDao
     abstract fun TicketDao(): TicketDao
     abstract fun MensajeDao(): MensajeDao
+
 }
