@@ -7,7 +7,6 @@ import edu.ucne.registrotecnicos.data.remote.Resource
 import edu.ucne.registrotecnicos.data.remote.dto.TecnicDto
 import edu.ucne.registrotecnicos.data.repository.TecnicRepository
 import edu.ucne.registrotecnicos.presentation.UiEvent
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -21,8 +20,8 @@ class TecnicViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(TecnicUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _uiEvent = Channel<UiEvent>()
-    val uiEvent = _uiEvent.receiveAsFlow()
+    private val _uiEvent = MutableSharedFlow<UiEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
 
     init {
         getTecnic()
@@ -102,7 +101,7 @@ class TecnicViewModel @Inject constructor(
                 getTecnic()
                 nuevo()
                 delay(2000)
-                _uiEvent.send(UiEvent.NavigateUp)
+                _uiEvent.emit(UiEvent.NavigateUp)
             } catch (e: retrofit2.HttpException) {
                 _uiState.update {
                     it.copy(
