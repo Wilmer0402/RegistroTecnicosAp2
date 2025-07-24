@@ -23,7 +23,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         tecnicoDb = Room.databaseBuilder(
             applicationContext,
             TecnicoDb::class.java,
@@ -34,16 +33,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             RegistroTecnicosTheme {
                 val nav = rememberNavController()
-
-                Scaffold(
-                    modifier = Modifier.fillMaxSize()
-                ) { paddingValues ->
-                    Box(modifier = Modifier.padding(paddingValues)) {
                         HomeNavHost(
-                            navHostController = nav
+                            navHostController = nav,
+                            context = this
                         )
-                    }
-                }
             }
         }
     }
