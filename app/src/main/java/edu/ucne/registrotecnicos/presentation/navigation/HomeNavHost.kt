@@ -1,6 +1,8 @@
 package edu.ucne.registrotecnicos.presentation.navigation
 
 
+
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -26,7 +28,8 @@ import edu.ucne.registrotecnicos.presentation.tecnicos.TecnicoScreen
 
 @Composable
 fun HomeNavHost(
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    context : Context
 ){
     NavHost(
         navController = navHostController,
@@ -34,7 +37,9 @@ fun HomeNavHost(
     ) {
         //inicio
         composable <Screen.Home> {
-            HomeScreen(navController = navHostController)
+            HomeScreen(navController = navHostController,
+            context = context
+            )
         }
 
         //pantalla lista de prioridades
