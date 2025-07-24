@@ -65,7 +65,7 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.1.0-alpha02")
     implementation ("androidx.compose.material:material:1.4.0")
     implementation("androidx.compose.material:material:1.3.1") // Usa la última versión
-
+    implementation("com.google.accompanist:accompanist-permissions:0.37.3")
 
 
     //Hilt
