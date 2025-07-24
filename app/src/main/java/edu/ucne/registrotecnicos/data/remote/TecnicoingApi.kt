@@ -1,5 +1,7 @@
 package edu.ucne.registrotecnicos.data.remote
 
+import edu.ucne.registrotecnicos.data.local.dao.SistemasDao
+import edu.ucne.registrotecnicos.data.remote.dto.SistemasDto
 import edu.ucne.registrotecnicos.data.remote.dto.TecnicDto
 import retrofit2.Response
 import retrofit2.http.Body
@@ -25,4 +27,22 @@ interface TecnicoingApi {
 
     @DELETE("api/Tecnicos/{id}")
     suspend fun deleteTecnic(@Path("id") id: Int): Response<Unit>
+
+    //Sistemas
+
+    @GET("api/Sistemas")
+    suspend fun getSistemas(): List<SistemasDto>
+
+    @GET("api/Sistemas/{id}")
+    suspend fun getSistemas(@Path("id") id: Int): List<SistemasDto>
+
+    @PUT("api/Sistemas/{id}")
+    suspend fun updateSistemas(@Body sistemasDto: SistemasDto): SistemasDto
+
+    @POST("api/Sistemas")
+    suspend fun saveSistemas(@Body sistemasDto: SistemasDto): SistemasDto
+
+    @DELETE("api/Sistemas/{id}")
+    suspend fun deleteSistemas(@Path("id") id: Int): Response<Unit>
 }
+
