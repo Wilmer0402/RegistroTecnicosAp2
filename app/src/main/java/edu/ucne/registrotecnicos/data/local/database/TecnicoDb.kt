@@ -6,12 +6,14 @@ import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import edu.ucne.registrotecnicos.data.local.dao.MensajeDao
 import edu.ucne.registrotecnicos.data.local.dao.PrioridadDao
+import edu.ucne.registrotecnicos.data.local.dao.SistemasDao
 import edu.ucne.registrotecnicos.data.local.dao.TecnicoDao
 import edu.ucne.registrotecnicos.data.local.dao.TicketDao
 import edu.ucne.registrotecnicos.data.local.entities.TecnicoEntity
 import edu.ucne.registrotecnicos.data.local.entities.PrioridadEntity
 import edu.ucne.registrotecnicos.data.local.entities.TicketEntity
 import edu.ucne.registrotecnicos.data.local.entities.MensajeEntity
+import edu.ucne.registrotecnicos.data.local.entities.SistemaEntity
 import java.util.Date
 
 class Converters {
@@ -31,9 +33,10 @@ class Converters {
         TecnicoEntity::class,
         PrioridadEntity::class,
         TicketEntity::class,
-        MensajeEntity::class
+        MensajeEntity::class,
+        SistemaEntity::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -42,5 +45,6 @@ abstract class TecnicoDb : RoomDatabase() {
     abstract fun PrioridadDao(): PrioridadDao
     abstract fun TicketDao(): TicketDao
     abstract fun MensajeDao(): MensajeDao
+    abstract fun SistemasDao(): SistemasDao
 
 }
