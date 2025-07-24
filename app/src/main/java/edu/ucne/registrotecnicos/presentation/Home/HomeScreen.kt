@@ -25,6 +25,7 @@ import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.icons.filled.Computer
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
@@ -45,13 +46,10 @@ fun HomeScreen(
         rememberPermissionState(permission =
             Manifest.permission.POST_NOTIFICATIONS)
     } else {
-        // En versiones anteriores, el permiso se concede implícitamente
         null
     }
 
     val notificationHandler = NotificationHandler(context)
-
-    // Solicita el permiso cuando la pantalla se carga por primera vez
     LaunchedEffect(key1 = true) {
         if (postNotificationPermission != null &&
             !postNotificationPermission.status.isGranted) {
@@ -122,6 +120,14 @@ fun HomeScreen(
                 onClick = {navController.navigate(Screen.TecnicList)},
                 backgroundColor = Color(0xFF81C784) // Verde suave
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            MenuButton(
+                title = "Ir a Sistemas API",
+                icon = Icons.Default.Computer,
+                onClick = {navController.navigate(Screen.SistemaList)},
+                backgroundColor = Color(0xFF64B5F6))// Azul
         }
     }
 }
